@@ -1,8 +1,8 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 11
@@ -12,7 +12,7 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -30,9 +30,6 @@ repositories {
 }
 
 
-apply plugin: 'android'
-apply plugin: 'android-apt'
-def AAVersion = '3.0.1'
 
 dependencies {
     compile 'com.android.support:appcompat-v7:+'
@@ -40,31 +37,14 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.0+@jar'
     compile 'com.google.android.gms:play-services:4.0.30'
     compile 'com.nineoldandroids:library:2.4.0@jar'
-    apt "org.androidannotations:androidannotations:$AAVersion"
-    compile "org.androidannotations:androidannotations-api:$AAVersion"
 }
 
-apt {
-    arguments {
-        androidManifestFile variant.processResources.manifestFile
-        resourcePackageName 'com.lal.focusprototype.app'
-
-        // If you're using Android NBS flavors you should use the following line instead of hard-coded packageName
-        // resourcePackageName android.defaultConfig.packageName
-
-        // You can set optional annotation processing options here, like these commented options:
-        // logLevel 'INFO'
-        // logFile '/var/log/aa.log'
-    }
-}
 
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        // replace with the current version of the Android plugin
-        classpath 'com.android.tools.build:gradle:0.9.+'
         // the latest version of the android-apt plugin
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.1'
     }

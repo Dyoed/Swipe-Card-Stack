@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import com.lal.focusprototype.app.R;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animonation.AnimatorSet;
+import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
 
@@ -44,6 +44,8 @@ public class CardStackView extends RelativeLayout {
 
     private static int STACK_SIZE = 4;
     private static int MAX_ANGLE_DEGREE = 20;
+    private static final int BOUNCE_SPEED = 300;
+    private boolean isGoingBack;
     private BaseAdapter mAdapter;
     private int mCurrentPosition;
     private int mMinDragDistance;
@@ -82,8 +84,8 @@ public class CardStackView extends RelativeLayout {
     private void setup() {
 
         Resources r = getContext().getResources();
-        mMinDragDistance = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, r.getDisplayMetrics());
-        mMinAcceptDistance = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, r.getDisplayMetrics());
+        mMinDragDistance = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, r.getDisplayMetrics());
+        mMinAcceptDistance = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, r.getDisplayMetrics());
 
         if (isInEditMode()) {
             mAdapter = new MockListAdapter(getContext());
@@ -280,7 +282,9 @@ public class CardStackView extends RelativeLayout {
     private class MyOnTouchListener implements OnTouchListener {
         @Override
         public boolean onTouch(final View view, MotionEvent event) {
-            if (!isTopCard(view)){
+
+
+            if (!isTopCard(view) || isGoingBack){
                 return false;
             }
 
@@ -313,22 +317,22 @@ public class CardStackView extends RelativeLayout {
                                 yTranslation
                         );
 
-                        set.setDuration(100).start();
+                        set.setDuration(BOUNCE_SPEED).start();
                         set.addListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
-
+                                isGoingBack = false;
                                 View finalView = mBeingDragged;
                                 mBeingDragged = null;
                                 mXDelta = 0;
                                 mYDelta = 0;
-                                mXStart = 0;
+                                mXStart = 0;//prevent
                                 mYStart = 0;
                                 requestLayout();
-
-                                if (mCardStackListener != null){
+                                if (mCardStackListener != null && finalView != null){
                                     mCardStackListener.onCancelled(finalView);
                                 }
+
                             }
                         });
 
@@ -345,6 +349,7 @@ public class CardStackView extends RelativeLayout {
                         xTranslation.addUpdateListener(onUpdate);
 
                         set.start();
+                        isGoingBack = true;
 
                     }else{
                         final View last = mCards.poll();
@@ -405,9 +410,8 @@ public class CardStackView extends RelativeLayout {
                     view.setTranslationX(X - mXStart);
                     view.setTranslationY(Y - mYStart);
 
-                    mXDelta = X - mXStart;
+                    mXDelta = isGoingBack ? 0 :(X - mXStart);
                     mYDelta = Y - mYStart;
-
                     mBeingDragged = view;
                     requestLayout();
 

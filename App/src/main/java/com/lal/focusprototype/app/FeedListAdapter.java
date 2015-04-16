@@ -6,30 +6,26 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.lal.focusprototype.app.views.FeedItemView;
-import com.lal.focusprototype.app.views.FeedItemView_;
-
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.util.List;
 
 /**
  * Created by diallo on 21/03/14.
  */
-@EBean
 public class FeedListAdapter extends BaseAdapter {
 
     List<FeedItem> mItems;
 
-    @Bean(FeedItemFinderImpl.class)
     FeedItemFinder mItemsFinder;
 
-    @RootContext
-    Context context;
+    private Context mContext;
+    public FeedListAdapter(Context context){
+        mContext = context;
+        mItemsFinder = new FeedItemFinderImpl();
+        initAdapter();
+    }
 
-    @AfterInject
+
     void initAdapter() {
         mItems = mItemsFinder.findAll();
     }
@@ -54,7 +50,7 @@ public class FeedListAdapter extends BaseAdapter {
 
         FeedItemView personItemView;
         if (convertView == null) {
-            personItemView = FeedItemView_.build(context);
+            personItemView = new FeedItemView(mContext);
         } else {
             personItemView = (FeedItemView) convertView;
         }

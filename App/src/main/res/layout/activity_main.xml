@@ -9,22 +9,18 @@
         android:clipToPadding="false"
         android:clipChildren="false"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
-        <include
-            layout="@layout/top_action_bar_view"
-            android:id="@+id/bar"></include>
 
         <com.lal.focusprototype.app.views.CardStackView
             android:id="@+id/mCardStack"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:padding="10dp"
-            android:layout_below="@+id/bar"
             android:layout_margin="0dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="400dp">
             </com.lal.focusprototype.app.views.CardStackView>
     </RelativeLayout>
 

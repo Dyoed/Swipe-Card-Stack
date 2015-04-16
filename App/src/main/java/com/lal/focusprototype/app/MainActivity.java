@@ -6,29 +6,27 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.Window;
 
 import com.lal.focusprototype.app.views.CardStackView;
 import com.lal.focusprototype.app.views.FeedItemView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.WindowFeature;
-
-@WindowFeature({ Window.FEATURE_ACTION_BAR})
-@EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
-    @ViewById
     CardStackView mCardStack;
 
     private Handler handler;
 
-    @AfterViews
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initialize();
+    }
+
     public void initialize(){
+        mCardStack = (CardStackView) findViewById(R.id.mCardStack);
         handler = new Handler();
 
         handler.postDelayed(new Runnable() {
@@ -72,7 +70,7 @@ public class MainActivity extends Activity {
     }
 
     private void doInitialize() {
-        mCardStack.setAdapter(FeedListAdapter_.getInstance_(this));
+        mCardStack.setAdapter(new FeedListAdapter(getApplicationContext()));
     }
 
     public Rect locateView(View view) {
