@@ -283,8 +283,8 @@ public class CardStackView extends RelativeLayout {
         @Override
         public boolean onTouch(final View view, MotionEvent event) {
 
-
-            if (!isTopCard(view) || isGoingBack){
+            //TODO find a way to get Y/height of Card to replace the 675
+            if (!isTopCard(view) || isGoingBack || (event.getRawY() > 675 && event.getAction() == MotionEvent.ACTION_DOWN)){
                 return false;
             }
 
@@ -326,7 +326,7 @@ public class CardStackView extends RelativeLayout {
                                 mBeingDragged = null;
                                 mXDelta = 0;
                                 mYDelta = 0;
-                                mXStart = 0;//prevent
+                                mXStart = 0;
                                 mYStart = 0;
                                 requestLayout();
                                 if (mCardStackListener != null && finalView != null){
