@@ -6,13 +6,13 @@ import java.util.List;
 /**
  * Created by diallo on 21/03/14.
  */
-public class FeedItemFinderImpl implements FeedItemFinder{
+public class CardItemImplImpl implements CardItemImpl {
     @Override
-    public List<FeedItem> findAll() {
-        ArrayList<FeedItem> items = new ArrayList<FeedItem>();
+    public List<CardItem> findAll() {
+        ArrayList<CardItem> items = new ArrayList<CardItem>();
         for(int i=1; i<= 100; i++){
             int index = i % 5 != 0 ? i % 5 : 1;
-            items.add(new FeedItem(i%5, i));
+            items.add(new CardItem(i%5, i));
         }
         return items;
     }

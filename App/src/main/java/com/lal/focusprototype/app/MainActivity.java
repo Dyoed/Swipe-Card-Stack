@@ -11,7 +11,7 @@ import android.os.Handler;
 import android.view.View;
 
 import com.lal.focusprototype.app.views.CardStackView;
-import com.lal.focusprototype.app.views.FeedItemView;
+import com.lal.focusprototype.app.views.CardItemView;
 
 public class MainActivity extends Activity {
     CardStackView mCardStack;
@@ -49,19 +49,19 @@ public class MainActivity extends Activity {
         mCardStack.setCardStackListener(new CardStackView.CardStackListener() {
             @Override
             public void onUpdateProgress(boolean choice, float percent, View view) {
-                FeedItemView item = (FeedItemView)view;
+                CardItemView item = (CardItemView)view;
                 item.onUpdateProgress(choice, percent, view);
             }
 
             @Override
             public void onCancelled(View beingDragged) {
-                FeedItemView item = (FeedItemView)beingDragged;
+                CardItemView item = (CardItemView)beingDragged;
                 item.onCancelled(beingDragged);
             }
 
             @Override
             public void onChoiceMade(boolean choice, View beingDragged) {
-                FeedItemView item = (FeedItemView)beingDragged;
+                CardItemView item = (CardItemView)beingDragged;
                 item.onChoiceMade(choice, beingDragged);
             }
         });
@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
     }
 
     private void doInitialize() {
-        mCardStack.setAdapter(new FeedListAdapter(getApplicationContext()));
+        mCardStack.setAdapter(new CardAdapter(getApplicationContext()));
     }
 
     public Rect locateView(View view) {

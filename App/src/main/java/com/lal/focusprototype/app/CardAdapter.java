@@ -5,23 +5,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.lal.focusprototype.app.views.FeedItemView;
+import com.lal.focusprototype.app.views.CardItemView;
 
 import java.util.List;
 
 /**
  * Created by diallo on 21/03/14.
  */
-public class FeedListAdapter extends BaseAdapter {
+public class CardAdapter extends BaseAdapter {
 
-    List<FeedItem> mItems;
+    List<CardItem> mItems;
 
-    FeedItemFinder mItemsFinder;
+    CardItemImpl mItemsFinder;
 
     private Context mContext;
-    public FeedListAdapter(Context context){
+    public CardAdapter(Context context){
         mContext = context;
-        mItemsFinder = new FeedItemFinderImpl();
+        mItemsFinder = new CardItemImplImpl();
         initAdapter();
     }
 
@@ -36,7 +36,7 @@ public class FeedListAdapter extends BaseAdapter {
     }
 
     @Override
-    public FeedItem getItem(int position) {
+    public CardItem getItem(int position) {
         return mItems.get(position);
     }
 
@@ -48,11 +48,11 @@ public class FeedListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        FeedItemView personItemView;
+        CardItemView personItemView;
         if (convertView == null) {
-            personItemView = new FeedItemView(mContext);
+            personItemView = new CardItemView(mContext);
         } else {
-            personItemView = (FeedItemView) convertView;
+            personItemView = (CardItemView) convertView;
         }
 
         personItemView.bind(getItem(position));

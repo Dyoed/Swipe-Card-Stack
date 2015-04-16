@@ -5,6 +5,6 @@ import java.util.List;
 /**
  * Created by diallo on 21/03/14.
  */
-public interface FeedItemFinder {
-    List<FeedItem> findAll();
+public interface CardItemImpl {
+    List<CardItem> findAll();
 }
