@@ -2,7 +2,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.lal.focusprototype.app.MainActivity">
+                tools:context="sample.MainActivity">
 
     <RelativeLayout
         android:id="@+id/content"
@@ -13,7 +13,7 @@
 
 
 
-        <com.lal.focusprototype.app.views.CardStackView
+        <core.CardStackView
             android:id="@+id/mCardStack"
             android:clipChildren="false"
             android:clipToPadding="false"
@@ -21,7 +21,7 @@
             android:layout_margin="0dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            </com.lal.focusprototype.app.views.CardStackView>
+            </core.CardStackView>
     </RelativeLayout>
 
     <ImageView
