@@ -7,6 +7,10 @@
     android:background="@drawable/gray_border">
 
     <ImageView
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
         android:id="@+id/picture"
         android:src="@drawable/blank"
         android:scaleType="centerCrop"
@@ -25,12 +29,13 @@
         tools:alpha="1"
         android:alpha="0"
         android:id="@+id/no"
-        android:text="No"
-        android:textSize="40dp"
+        android:text="NO"
+        android:textSize="100dp"
         android:textColor="#FF0000"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="7dp"
+        android:layout_marginLeft="40dp"
         android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
@@ -39,13 +44,28 @@
         tools:alpha="1"
         android:alpha="0"
         android:id="@+id/ok"
-        android:text="Ok"
-        android:textSize="40dp"
+        android:text="YES"
+        android:textSize="100dp"
         android:textColor="#00FF00"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="7dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        tools:alpha="1"
+        android:alpha="0"
+        android:id="@+id/skip"
+        android:text="SKIP"
+        android:textSize="100dp"
+        android:textColor="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="40dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </RelativeLayout>

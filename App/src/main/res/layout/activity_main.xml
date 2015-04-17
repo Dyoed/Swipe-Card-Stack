@@ -5,32 +5,24 @@
                 tools:context="sample.MainActivity">
 
     <RelativeLayout
+        android:paddingTop="200dp"
         android:id="@+id/content"
         android:clipToPadding="false"
         android:clipChildren="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-
         <core.CardStackView
+            android:layout_centerInParent="true"
             android:id="@+id/mCardStack"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:padding="10dp"
+            android:padding="25dp"
             android:layout_margin="0dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             </core.CardStackView>
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/splash"
-        tools:visibility="gone"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:src="@drawable/splash"
-        android:scaleType="centerCrop"
-        />
 
 </RelativeLayout>
