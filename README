@@ -1,3 +1,11 @@
 Tinder like card stack implementation
 
 Currently in development, feel free to file an issue/suggest a feature.
+
+<b>Changelog:</b>
+
+* Added the ability for 3rd gesture(SKIP)
+
+* Extracted the class to core folder for easier API integration.
+
+* Fixed a bug which causes the cardview to jump once pressed.
