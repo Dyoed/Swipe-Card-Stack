@@ -3,10 +3,13 @@ package sample;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.jecs.swipecardstack.R;
+
+import java.util.ArrayList;
 
 import core.CardStackView;
 
@@ -14,6 +17,7 @@ public class MainActivity extends Activity {
     CardStackView mCardStack;
 
     private Handler handler;
+    private UserCardAdapter mCardAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +28,7 @@ public class MainActivity extends Activity {
 
     public void initialize(){
         mCardStack = (CardStackView) findViewById(R.id.mCardStack);
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
         doInitialize();
 
         mCardStack.setCardStackListener(new CardStackView.CardStackListener<CardItem>() {
@@ -35,26 +39,39 @@ public class MainActivity extends Activity {
 
             @Override
             public void onChoiceMade(int choice, CardItem item) {
-                Toast.makeText(getApplicationContext(), "Choice:"+choice, Toast.LENGTH_SHORT).show();
-                Log.d("", item.toString()+" Choice:"+choice);
+                Toast.makeText(getApplicationContext(), "Choice:" + choice, Toast.LENGTH_SHORT).show();
+                Log.d("", item.toString() + " Choice:" + choice);
             }
 
             @Override
             public void onClick(CardItem item) {
-                Log.d("", "Clicked "+item.toString());
+                Log.d("", "Clicked " + item.toString());
             }
 
             @Override
-            public void onDOubleClick(CardItem item) {
+            public void onDoubleClick(CardItem item) {
 
             }
+
+            @Override
+            public void onGetNewCards(int current, int total, int skippedItemCount) {
+                ArrayList<CardItem> items = new ArrayList<CardItem>();
+                for (int i = total; i <= total+25; i++) {
+                    int index = i % 5 != 0 ? i % 5 : 1;
+                    items.add(new CardItem(i % 5, i));
+                }
+                Log.d("","Get new cards"+items.size());
+                mCardAdapter.addAll(items);
+            }
         });
+
 
         return;
     }
 
     private void doInitialize() {
-        mCardStack.setAdapter(new UserCardAdapter(getApplicationContext()));
+        mCardAdapter = new UserCardAdapter(getApplicationContext());
+        mCardStack.setAdapter(mCardAdapter);
     }
 
 

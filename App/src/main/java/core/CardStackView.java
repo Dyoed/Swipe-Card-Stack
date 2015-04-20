@@ -43,6 +43,8 @@ import java.util.List;
  */
 public class CardStackView extends RelativeLayout {
 
+
+
     public interface CardStackListener<T> {
         void onCancelled();
 
@@ -50,7 +52,9 @@ public class CardStackView extends RelativeLayout {
 
         void onClick(T item);
 
-        void onDOubleClick(T item);
+        void onDoubleClick(T item);
+
+        void onGetNewCards(int current, int total, int skippedItemCount);
     }
 
     public static final int NO = 0;
@@ -69,7 +73,7 @@ public class CardStackView extends RelativeLayout {
     public static final int SKIP_THRESHHOLD = 80;
     public static final int YES_NO_THRESHHOLD = 30;
     private boolean isGoingBack;
-    private BaseAdapter mAdapter;
+    private CardAdapter mAdapter;
     private int mCurrentPosition;
     private int mMinDragDistance;
     private int mMinAcceptDistance;
@@ -95,6 +99,19 @@ public class CardStackView extends RelativeLayout {
     private int mYStart;
     private View mBeingDragged;
     private MyOnTouchListener mMyTouchListener;
+
+
+    private int mSkipCount;
+    private boolean isGettingNewCards = false;
+    private static int PAGINATION_THRESHOLD = 1;//Cards left before pagination is fired
+
+    public static void setPaginationThreshhold(int PAGINATION_THRESHOLD) {
+        CardStackView.PAGINATION_THRESHOLD = PAGINATION_THRESHOLD;
+    }
+
+    public int getSkipCount() {
+        return mSkipCount;
+    }
 
     public void setGestureCount(int gestureCount) {
         if (gestureCount < 2) {
@@ -126,34 +143,40 @@ public class CardStackView extends RelativeLayout {
         mYMinAcceptDistance = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, r.getDisplayMetrics());
 
         if (isInEditMode()) {
-            mAdapter = new MockListAdapter(getContext());
+//            mAdapter = new MockListAdapter(getContext());
         }
 
         clickRunnable = new ClickRunnable();
-
         mCurrentPosition = 0;
     }
 
-    public void setAdapter(BaseAdapter adapter) {
+    public void setAdapter(CardAdapter adapter) {
         mAdapter = adapter;
+        mAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                mSkipCount = 0;
+                isGettingNewCards = false;
+                super.onChanged();
+            }
+
+            @Override
+            public void onInvalidated() {
+                mSkipCount = 0;
+                mRecycledCards.clear();
+                mCards.clear();
+                removeAllViews();
+                mCurrentPosition = 0;
+                initializeStack();
+                super.onInvalidated();
+            }
+        });
         mRecycledCards.clear();
         mCards.clear();
         removeAllViews();
         mCurrentPosition = 0;
 
         initializeStack();
-        mAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onInvalidated() {
-                super.onInvalidated();
-            }
-
-            @Override
-            public void onChanged() {
-                Log.d("", "Onchanged");
-                super.onChanged();
-            }
-        });
     }
 
     private void initializeStack() {
@@ -176,11 +199,11 @@ public class CardStackView extends RelativeLayout {
 
             addView(card, 0, params);
 
-            mMyTouchListener = new MyOnTouchListener();
         }
-
+        mMyTouchListener = new MyOnTouchListener();
         mCurrentPosition += position;
     }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -271,8 +294,8 @@ public class CardStackView extends RelativeLayout {
 
         float scale = step * (position - zoomFactor);
         float translate = translateStep * (position - zoomFactor);
-        view.setTranslationY(translate);
-        view.setTranslationX(0);
+        view.setTranslationY(0);
+        view.setTranslationX(translate);
         view.setRotation(0);
         view.setScaleX(1 - scale);
         view.setScaleY(1 - scale);
@@ -348,7 +371,6 @@ public class CardStackView extends RelativeLayout {
     private class MyOnTouchListener implements OnTouchListener {
         @Override
         public boolean onTouch(final View view, MotionEvent event) {
-            //TODO find a way to get Y/height of Card to replace the 675
             if (!isTopCard(view) || isGoingBack) {
                 return false;
             }
@@ -465,6 +487,10 @@ public class CardStackView extends RelativeLayout {
                                     mCardStackListener.onChoiceMade(choice, item.getCardItem());
                                 }
 
+                                if(choice == SKIP){
+                                   mSkipCount++;
+                                }
+
                                 recycleView(last);
 
                                 final ViewGroup parent = (ViewGroup) view.getParent();
@@ -478,6 +504,13 @@ public class CardStackView extends RelativeLayout {
                                 setTranslationY(0);
                                 setTranslationX(0);
                                 requestLayout();
+
+                                if(mAdapter.getCount() - mCurrentPosition <= PAGINATION_THRESHOLD && !isGettingNewCards){
+                                    Log.d("","Total:"+mAdapter.getCount()+" Current Position:"+mCurrentPosition+ " " +
+                                            "isLoading"+isGettingNewCards);
+                                    isGettingNewCards = true;
+                                    mCardStackListener.onGetNewCards(mCurrentPosition, mAdapter.getCount(), getSkipCount());
+                                }
                             }
                         });
                         animation.start();
@@ -521,10 +554,11 @@ public class CardStackView extends RelativeLayout {
 
 
     private void click(View view) {
-//        clickCount++;
+        clickCount++;
+        Log.d("", "Click count:"+clickCount);
         if (mCardStackListener != null) {
 //            clickRunnable.setSelectedView(view);
-//            doubleClickHandler.postDelayed(clickRunnable, MAX_CLICK_DURATION+800);
+            doubleClickHandler.postDelayed(clickRunnable, MAX_CLICK_DURATION+800);
             mCardStackListener.onClick(((CardItemView) view).getCardItem());
         }
     }
