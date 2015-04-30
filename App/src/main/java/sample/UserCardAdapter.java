@@ -5,9 +5,6 @@ import android.content.Context;
 import core.CardAdapter;
 import core.CardItemView;
 
-/**
- * Created by diallo on 21/03/14.
- */
 public class UserCardAdapter extends CardAdapter<CardItem> {
 
     CardItemImpl mItemsFinder;

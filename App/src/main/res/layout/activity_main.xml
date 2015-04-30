@@ -5,12 +5,12 @@
                 tools:context="sample.MainActivity">
 
     <RelativeLayout
-        android:paddingTop="200dp"
+        android:paddingTop="120dp"
         android:id="@+id/content"
         android:clipToPadding="false"
         android:clipChildren="false"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <core.CardStackView
             android:layout_centerInParent="true"
@@ -19,8 +19,8 @@
             android:clipToPadding="false"
             android:padding="25dp"
             android:layout_margin="0dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             </core.CardStackView>
     </RelativeLayout>
 

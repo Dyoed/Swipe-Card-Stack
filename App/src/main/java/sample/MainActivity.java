@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onDoubleClick(CardItem item) {
-
+                Log.d("", item.getId()+"");
             }
 
             @Override

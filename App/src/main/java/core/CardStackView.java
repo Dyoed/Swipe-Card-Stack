@@ -61,7 +61,7 @@ public class CardStackView extends RelativeLayout {
     private static final String TRANSLATIONY = "translationY";
     public int gestureCount = 3;
 
-    private static int STACK_SIZE = 4;
+    private static int STACK_SIZE = 3;
     private static int MAX_ANGLE_DEGREE = 20;
     private static final int BOUNCE_SPEED = 300;
     public static final int SKIP_THRESHHOLD = 80;
@@ -86,7 +86,7 @@ public class CardStackView extends RelativeLayout {
     private int mXStart;
     private int mYStart;
     private View mBeingDragged;
-    private CardTouchListener mMyTouchListener;
+    private CardTouchListener mCardTouchListener;
 
 
     private int mSkipCount;
@@ -180,7 +180,7 @@ public class CardStackView extends RelativeLayout {
             addView(card, 0, params);
 
         }
-        mMyTouchListener = new CardTouchListener();
+        mCardTouchListener = new CardTouchListener();
         lastCardIndex += position;
     }
 
@@ -201,7 +201,7 @@ public class CardStackView extends RelativeLayout {
             }
 
             if (isTopCard(card)) {
-                card.setOnTouchListener(mMyTouchListener);
+                card.setOnTouchListener(mCardTouchListener);
             } else {
                 card.setOnTouchListener(null);
             }
@@ -273,12 +273,13 @@ public class CardStackView extends RelativeLayout {
         float translateStep = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, r.getDisplayMetrics());
 
         float scale = step * (position - zoomFactor);
+        Log.d("","Scale:"+scale);
         float translate = translateStep * (position - zoomFactor);
         view.setTranslationY(0);
         view.setTranslationX(translate);
         view.setRotation(0);
-        view.setScaleX(1 - scale);
-        view.setScaleY(1 - scale);
+        view.setScaleX(1f-scale);
+        view.setScaleY(1f-scale);
 
 
         return;
@@ -387,6 +388,7 @@ public class CardStackView extends RelativeLayout {
                     if (mBeingDragged == null) {
                         return false;
                     }
+
 
                     if (!canAcceptChoice()) {
 
