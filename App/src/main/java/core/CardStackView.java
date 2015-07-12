@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -28,16 +29,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by diallo on 14/04/14.
- * <p/>
- * An implementation of a tinder like cardstack that can be swiped left or right.
- * The implmentation use the http://nineoldandroids.com/ implentation to be compatible
- * with pre ICS.
  *
  * Updated by Dyoed on 04/17/2015
  *
  */
-public class CardStackView extends RelativeLayout {
+public class CardStackView extends FrameLayout {
 
 
 
@@ -87,7 +83,8 @@ public class CardStackView extends RelativeLayout {
     private int mYStart;
     private View mBeingDragged;
     private CardTouchListener mCardTouchListener;
-
+    Resources r = getContext().getResources();
+    float translateStep = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, r.getDisplayMetrics());
 
     private int mSkipCount;
     private boolean isGettingNewCards = false;
@@ -174,10 +171,10 @@ public class CardStackView extends RelativeLayout {
 
             mCards.offer(card);
 
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-            addView(card, 0, params);
+
+            addView(card, 0);
 
         }
         mCardTouchListener = new CardTouchListener();
@@ -192,9 +189,15 @@ public class CardStackView extends RelativeLayout {
             mYDelta = (int) mBeingDragged.getTranslationY();
         }
 
+        animateCards();
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    private void animateCards() {
         int index = 0;
         Iterator<View> it = mCards.descendingIterator();
-        while (it.hasNext()) {
+        while (it.hasNext() && index < 3) {
             View card = it.next();
             if (card == null) {
                 break;
@@ -219,8 +222,6 @@ public class CardStackView extends RelativeLayout {
 
             index++;
         }
-
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     private boolean adapterHasMoreItems() {
@@ -250,7 +251,7 @@ public class CardStackView extends RelativeLayout {
             float progress = Math.min(Math.abs(mXDelta) / ((float) mMinAcceptDistance * 5), 1);
             float angleDegree = MAX_ANGLE_DEGREE * interpolator.getInterpolation(progress);
 
-            view.setRotation(sign * angleDegree);
+//            view.setRotation(sign * angleDegree);
 
             return;
         }
@@ -269,8 +270,7 @@ public class CardStackView extends RelativeLayout {
 
         float step = 0.025f;
 
-        Resources r = getContext().getResources();
-        float translateStep = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, r.getDisplayMetrics());
+
 
         float scale = step * (position - zoomFactor);
         Log.d("","Scale:"+scale);
@@ -392,7 +392,7 @@ public class CardStackView extends RelativeLayout {
 
                     if (!canAcceptChoice()) {
 
-                        requestLayout();
+                        animateCards();
                         AnimatorSet set = new AnimatorSet();
                         ObjectAnimator yTranslation = ObjectAnimator.ofFloat(mBeingDragged, TRANSLATIONY, 0);
                         ObjectAnimator xTranslation = ObjectAnimator.ofFloat(mBeingDragged, TRANSLATIONX, 0);
@@ -412,7 +412,7 @@ public class CardStackView extends RelativeLayout {
                                 mYDelta = 0;
                                 mXStart = 0;
                                 mYStart = 0;
-                                requestLayout();
+                                animateCards();
 
                                 CardItemView item = (CardItemView) view;
                                 item.onCancelled();
@@ -428,7 +428,7 @@ public class CardStackView extends RelativeLayout {
                             public void onAnimationUpdate(ValueAnimator animation) {
                                 mXDelta = (int) view.getTranslationX();
                                 mYDelta = (int) view.getTranslationY();
-                                requestLayout();
+                                animateCards();
                             }
                         };
 
@@ -441,14 +441,7 @@ public class CardStackView extends RelativeLayout {
                     } else {
                         final View last = mCards.poll();
 
-                        View recycled = getRecycledOrNew();
-                        if (recycled != null) {
-                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                            params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
-                            mCards.offer(recycled);
-                            addView(recycled, 0, params);
-                        }
 
                         int sign;
                         final int choice = getChoice();
@@ -466,7 +459,7 @@ public class CardStackView extends RelativeLayout {
                         mYStart = 0;
 
                         ObjectAnimator animation = ObjectAnimator.ofFloat(last, translation, sign * 1000)
-                                .setDuration(300);
+                                .setDuration(150);
                         animation.addListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -483,17 +476,26 @@ public class CardStackView extends RelativeLayout {
 
                                 recycleView(last);
 
-                                final ViewGroup parent = (ViewGroup) view.getParent();
-                                if (null != parent) {
-                                    parent.removeView(view);
-                                    parent.addView(view, 0);
+//                                final ViewGroup parent = (ViewGroup) view.getParent();
+//                                if (null != parent) {
+//                                    parent.removeView(view);
+//                                    parent.addView(view, 0);
+//                                }
+
+                                View recycled = getRecycledOrNew();
+                                if (recycled != null) {
+//                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//                            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+                                    mCards.offer(recycled);
+                                    addView(recycled, 0);
                                 }
 
                                 last.setScaleX(1);
                                 last.setScaleY(1);
                                 setTranslationY(0);
                                 setTranslationX(0);
-                                requestLayout();
+//                                animateCards();
 
                                 if(mAdapter.getCount() - lastCardIndex <= PAGINATION_THRESHOLD && !isGettingNewCards){
                                     Log.d("","Total:"+mAdapter.getCount()+" Current Position:"+ (lastCardIndex - STACK_SIZE) +
@@ -515,7 +517,7 @@ public class CardStackView extends RelativeLayout {
                     mXDelta = isGoingBack ? 0 : (X - mXStart);
                     mYDelta = Y - mYStart;
                     mBeingDragged = view;
-                    requestLayout();
+                    animateCards();
                     CardItemView item = (CardItemView) view;
                     if (choice == SKIP) {
                         item.onUpdateProgress(choice, getYStackProgress(), mXDelta, mYDelta, gestureCount);
